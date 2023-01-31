@@ -16,6 +16,10 @@ class Frame_info(Frame):
 
         frame_name_num = Frame(self)
 
+        btn_update = Button(frame_name_num, text='更新个人信息：',
+                            command=self.update_info)
+        btn_update.pack(side='left', fill='x')
+
         label_name = Label(frame_name_num, text='姓名：', anchor=E)
         label_name.pack(side='left')
 
@@ -23,12 +27,12 @@ class Frame_info(Frame):
         self.text_name.insert(1.0, self.name)
         self.text_name.pack(side='left')
 
-        label_num = Label(frame_name_num, text='        学号：', anchor=E)
-        label_num.pack(side='left', fill='x')
+        label_num = Label(frame_name_num, text='学号：', anchor=E)
+        label_num.pack(side='left')
 
         self.text_num = Text(frame_name_num, width=12, height=1)
         self.text_num.insert(1.0, self.num)
-        self.text_num.pack(side='left', fill='x')
+        self.text_num.pack(side='left')
 
         frame_name_num.pack(fill='x')
 
@@ -44,48 +48,116 @@ class Frame_info(Frame):
 
         frame_path.pack(fill='x')
 
-        self.bind('<Motion>', self.update_info)
-        self.text_name.bind('<Motion>', self.update_info)
-        self.text_num.bind('<Motion>', self.update_info)
-        self.text_path.bind('<Motion>', self.update_info)
-        label_name.bind('<Motion>', self.update_info)
-        label_num.bind('<Motion>', self.update_info)
-        btn_path.bind('<Motion>', self.update_info)
-
     def get_path(self):
         res = filedialog.askdirectory()
         if not res == '':
             self.text_path.delete(1.0, 'end')
             self.text_path.insert(1.0, res)
+        self.update_info()
 
-    def update_info(self, event) -> None:
-        name = self.text_name.get(1.0, 'end')[:-1]
-        num = self.text_num.get(1.0, 'end')[:-1]
-        path = self.text_path.get(1.0, 'end')[:-1]
-        if not name == self.name or not num == self.num or not path == self.path:
-            f = open('info', 'w', encoding='utf-8')
-            nnp = name + '\n' + num + '\n' + path
-            f.write(nnp)
-            f.close()
+    def update_info(self) -> None:
+        self.name = self.text_name.get(1.0, 'end')[:-1]
+        self.num = self.text_num.get(1.0, 'end')[:-1]
+        self.path = self.text_path.get(1.0, 'end')[:-1]
+        nnp = self.name + '\n' + self.num + '\n' + self.path
+        # print(nnp)
+        f = open(os.path.dirname(__file__)+'\\info', 'w', encoding='utf-8')
+        f.write(nnp)
+        f.close()
 
 
 class uploader_tk:
     r = Tk()
     f_info = Frame_info(r)
-    btn_analysis = Button(r, text='解析统计文件', command=lambda: print(
-        filedialog.askopenfilename()))
+    btns_task = []
+    now_int = IntVar()
 
     def __init__(self):
         self.r.title('上传端')
-        self.r.geometry('300x500+100+100')
+        self.r.geometry('350x500+100+100')
 
         Label(self.r, text='个人信息').pack()
         self.f_info.pack(fill='x')
 
         # Label(self.r, text='功能按键').pack()
-        self.btn_analysis.pack(fill='x')
+        btn_analysis = Button(self.r, text='解析统计文件', command=lambda: self.file_analysis(
+            filedialog.askopenfilename()))
+        btn_analysis.pack(fill='x')
 
         self.r.mainloop()
+
+    def file_analysis(self, filename):
+        if filename == '':
+            return None
+
+        self.task_list = []
+        f_analysis = open(filename, 'r', encoding='utf-8')
+        allinfo = f_analysis.readlines()
+        temp_res = ''
+        flag = False
+        for line in allinfo:
+            if line[0] == '|':
+                temp_res += line[2:]
+                flag = True
+            if flag and not line[0] == '|':
+                flag = False
+                self.task_list.append(temp_res)
+                temp_res = ''  # 这句真得很重要
+
+        allinfo.reverse()
+        # print(allinfo)
+        task_lines = []
+        for line in allinfo:
+            if self.f_info.num in line:
+                if line.index(self.f_info.num) == 0:
+                    # print(line[self.f_info.num.__len__()+2:])
+                    temp_str = ''
+                    for ch in line[self.f_info.num.__len__()+2:]:
+                        if ch == '|':
+                            # print(temp_str)
+                            task_lines.append(temp_str)
+                            temp_str = ''
+                        else:
+                            temp_str += ch
+                    break
+        self.update_frame_task(task_lines)
+        f_analysis.close()
+
+    def update_frame_task(self, task_lines):
+        if self.btns_task.__len__():
+            for btn in self.btns_task:
+                btn.destroy()
+            self.btns_task = []
+        for task_line in task_lines:
+            btn = Radiobutton(self.r, text='未完成任务：'+task_line, command=lambda: self.get_zipfile(task_lines[self.now_int.get()]),
+                              variable=self.now_int, value=task_lines.index(task_line), anchor=W)
+            btn.pack(fill='x')
+            self.btns_task.append(btn)
+
+    def get_zipfile(self, task_line):
+        r = Toplevel(self.r)
+        r.geometry('350x500+460+100')
+        r.title(task_line)
+
+        # print(self.task_list)
+        for task in self.task_list:
+            name = ''
+            for ch in task:
+                if ch == '\n':
+                    break
+                else:
+                    name += ch
+            # print(task_line, name)
+            if task_line == name:
+                if task.index(task_line) == 0:
+                    Label(r, text='任务名以及需要提交的文件：' +
+                          task[:-1], anchor=W).pack(fill='x')
+        Button(r, text='选择符合要求的文件（长按CTRL键可多选）：',
+               command=self.get_paths).pack(fill='x')
+
+    def get_paths(self):
+        paths = filedialog.askopenfiles()
+        print(paths)
 
 
 uploader_tk()

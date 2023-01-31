@@ -16,7 +16,9 @@ class Toplevel_task(Toplevel):
         self.text_name = Text(self, height=1)
         self.text_name.pack(fill='x')
         Label(self, text='【至少一项】所需提交的文件名(最好包括文件类型)列表：').pack(anchor=W)
-        self.task_name = Text(self, height=30)
+        Button(self, text='清空本行以下文字',
+               command=lambda: self.task_name.delete(1.0, 'end')).pack(fill='x')
+        self.task_name = Text(self, height=25)
         example = '''
 模拟电子线路仿真项目一实验报告.docx
 温控声光报警器.ms14
@@ -154,7 +156,8 @@ class collect_tk:
                 for task in task_list:
                     if root[len_of_dir:] == task[0][:-1]:
                         f.write('\n任务名：'+task[0][:-1]+'\n')
-                        for task_info in task:
+                        f.write('| '+task[0])
+                        for task_info in task[1:]:
                             f.write('| '+task_info)
                         f.write('已交数量：'+str(files.__len__())+'\n')
                         f.write(
@@ -177,9 +180,10 @@ class collect_tk:
         for res in res_list:
             for student_info in res:
                 if res.index(student_info):
-                    f.write(student_info[:-1]+', ')
+                    f.write(student_info[:-1]+'|')
                 else:
                     f.write('\n'+student_info[:-1]+': ')
+        f.write('\n')
 
         f.close()
 
