@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter import filedialog
 import os
+import zipfile
 
 
 class Frame_info(Frame):
@@ -153,11 +154,27 @@ class uploader_tk:
                     Label(r, text='任务名以及需要提交的文件：' +
                           task[:-1], anchor=W).pack(fill='x')
         Button(r, text='选择符合要求的文件（长按CTRL键可多选）：',
-               command=self.get_paths).pack(fill='x')
+               command=lambda: self.get_paths(name)).pack(fill='x')
 
-    def get_paths(self):
-        paths = filedialog.askopenfiles()
-        print(paths)
+    def get_paths(self, task_name):
+        filenames = []
+        files = filedialog.askopenfiles()
+        for file in files:
+            filenames.append(file.name)
+        if filenames.__len__() > 0:
+            with zipfile.ZipFile(self.f_info.path+'/'+task_name+'.zip', 'w') as zipf:
+                if filenames.__len__() == 1:
+                    temp_str = filenames[0][::-1]
+                    filetype = ''
+                    for ch in temp_str:
+                        filetype += ch
+                        if ch == '.':
+                            break
+                    zipf.write(filenames[0], task_name + '-' +
+                               self.f_info.num + '-' + self.f_info.name + filetype[::-1])
+                else:
+                    for filename in filenames:
+                        pass
 
 
 uploader_tk()

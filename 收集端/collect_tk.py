@@ -15,7 +15,7 @@ class Toplevel_task(Toplevel):
         Label(self, text='【必填】任务名称/文件夹名称：').pack(anchor=W)
         self.text_name = Text(self, height=1)
         self.text_name.pack(fill='x')
-        Label(self, text='【至少一项】所需提交的文件名(最好包括文件类型)列表：').pack(anchor=W)
+        Label(self, text='所需提交的文件名(最好包括文件类型)列表：').pack(anchor=W)
         Button(self, text='清空本行以下文字',
                command=lambda: self.task_name.delete(1.0, 'end')).pack(fill='x')
         self.task_name = Text(self, height=25)
@@ -25,6 +25,7 @@ class Toplevel_task(Toplevel):
 项目概述.doc
 
 （注：Windows系统内，文件名不得含有以下任何半角字符：\ / : * ? " < > | ）
+（当本文本框被清空时或仅填一项时，压缩包将被解压为单文件，否则为文件夹）
 （以上都是引导用的例子，实际使用时应该删除它们）'''
         self.task_name.insert(1.0, example)
         self.task_name.pack(fill='x')
