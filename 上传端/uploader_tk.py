@@ -154,15 +154,16 @@ class uploader_tk:
                     Label(r, text='任务名以及需要提交的文件：' +
                           task[:-1], anchor=W).pack(fill='x')
         Button(r, text='选择符合要求的文件（长按CTRL键可多选）：',
-               command=lambda: self.get_paths(name)).pack(fill='x')
+               command=lambda: self.get_paths(name, r)).pack(fill='x')
 
-    def get_paths(self, task_name):
+    def get_paths(self, task_name, r: Toplevel):
+        print(task_name)
         filenames = []
         files = filedialog.askopenfiles()
         for file in files:
             filenames.append(file.name)
         if filenames.__len__() > 0:
-            with zipfile.ZipFile(self.f_info.path+'/'+task_name+'.zip', 'w') as zipf:
+            with zipfile.ZipFile(self.f_info.path+'/' + self.f_info.num + '-' + self.f_info.name + '.' + task_name + '.zip', 'w') as zipf:
                 if filenames.__len__() == 1:
                     temp_str = filenames[0][::-1]
                     filetype = ''
@@ -175,6 +176,7 @@ class uploader_tk:
                 else:
                     for filename in filenames:
                         pass
+            r.destroy()
 
 
 uploader_tk()

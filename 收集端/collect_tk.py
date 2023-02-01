@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import filedialog
 import os
 import time
+import zipfile
+
 cur_path = os.path.dirname(__file__)
 
 
@@ -92,8 +94,7 @@ class collect_tk:
         t_jieya = '解压文件 | '
         for root, dirs, files in os.walk(cur_path+'\\待解压的文件'):
             t_jieya += '待解压数量：' + str(files.__len__())
-        Button(self.r, text=t_jieya, command=lambda: print(
-            cur_path+'\\待解压的文件')).pack(fill='x')
+        Button(self.r, text=t_jieya, command=self.read_zip).pack(fill='x')
 
         Button(self.r, text='查看日志', command=lambda: os.startfile(
             cur_path+'\\logs'), relief=FLAT).pack(side='bottom', anchor=SE)
@@ -187,6 +188,22 @@ class collect_tk:
         f.write('\n')
 
         f.close()
+
+    def read_zip(self):
+        for root, dirs, files in os.walk(cur_path+'\\待解压的文件'):
+            for f in files:
+                # print(root + '\\' + f)
+                with zipfile.ZipFile(root + '\\' + f, 'r') as zipf:
+                    print(f)
+                    task_name = ''
+                    for ch in f[:-4][::-1]:
+                        if ch == '.':
+                            break
+                        else:
+                            task_name += ch
+                    zipf.extractall(os.path.dirname(
+                        __file__)+'\\已解压的文件\\'+task_name[::-1])
+                os.remove(root + '\\' + f)
 
 
 collect_tk()
