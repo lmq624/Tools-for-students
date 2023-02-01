@@ -136,6 +136,7 @@ class uploader_tk:
             self.btns_task.append(btn)
 
     def get_zipfile(self, task_line):
+        print(task_line)
         r = Toplevel(self.r)
         r.geometry('350x500+460+100')
         r.title(task_line)
@@ -153,8 +154,8 @@ class uploader_tk:
                 if task.index(task_line) == 0:
                     Label(r, text='任务名以及需要提交的文件：' +
                           task[:-1], anchor=W).pack(fill='x')
-        Button(r, text='选择符合要求的文件（长按CTRL键可多选）：',
-               command=lambda: self.get_paths(name, r)).pack(fill='x')
+        Button(r, text='选择符合要求的文件（按住CTRL键可进行多选）：',
+               command=lambda: self.get_paths(task_line, r)).pack(fill='x')
 
     def get_paths(self, task_name, r: Toplevel):
         print(task_name)
@@ -171,11 +172,26 @@ class uploader_tk:
                         filetype += ch
                         if ch == '.':
                             break
-                    zipf.write(filenames[0], task_name + '-' +
+                    zipf.write(filenames[0],  # task_name + '-' +
                                self.f_info.num + '-' + self.f_info.name + filetype[::-1])
                 else:
                     for filename in filenames:
-                        pass
+                        print(filename)
+                        temp_str = filename[::-1]
+                        filetype = ''
+                        mainname = ''
+                        flag = 1
+                        for ch in temp_str:
+                            if ch == '/':
+                                break
+                            elif flag:
+                                filetype += ch
+                            else:
+                                mainname += ch
+                            if ch == '.':
+                                flag = 0
+                        zipf.write(filenames[0], self.f_info.num + '-' + self.f_info.name + '/' +
+                                   mainname[::-1] + filetype[::-1])
             r.destroy()
 
 
