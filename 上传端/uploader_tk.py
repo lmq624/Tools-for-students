@@ -179,8 +179,10 @@ class uploader_tk:
                         r.btns.append(btn)
                 break
 
-        Label(r, text='\n温馨提示\n不强制要求提交的文件与任务中提到的文件名同名，\n本软件将自动在压缩过程中对文件进行重命名。').pack(
+        Label(r, text='\n温馨提示\n不强制要求提交的文件与任务中提到的文件名同名，\n本软件将自动在压缩过程中对文件进行重命名。\n\n请不要修改压缩包的文件名，否则将导致压缩失败').pack(
             fill='x')
+        Button(r, text='单击此按钮，可使本窗口最大化',
+               command=lambda: r.state('zoomed')).pack()
 
         Frame_bool = Frame(r)
         self.btn = Button(Frame_bool, text='确定', command=lambda: self.get_files(task_line, filenames, r), bg='lightgreen', width=20,
