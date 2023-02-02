@@ -69,11 +69,11 @@ class Toplevel_task(Toplevel):
         return True
 
 
-class collect_tk:
+class archive_tk:
     r = Tk()
 
     def __init__(self):
-        self.r.title('上传端')
+        self.r.title('归档端')
         self.r.geometry('300x500+100+100')
 
         Button(self.r, text='修改名单/查看名单', width=20, command=lambda: os.startfile(
@@ -213,5 +213,5 @@ class collect_tk:
         self.btn_zipf['text'] = t_jieya
 
 
-collect_tk()
+archive_tk()
 pass
