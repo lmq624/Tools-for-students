@@ -1,9 +1,10 @@
-# collect.py
+# archive_tk.py
 from tkinter import *
 from tkinter import filedialog
 import os
 import time
 import zipfile
+from PIL import Image, ImageTk
 
 cur_path = os.path.dirname(__file__)
 
@@ -76,6 +77,11 @@ class archive_tk:
         self.r.title('归档端')
         self.r.geometry('300x500+100+100')
 
+        background_image = ImageTk.PhotoImage(
+            Image.open(os.path.dirname(__file__)+'/bg.jpg'))
+        Label(self.r, image=background_image, bg='white').pack(fill=BOTH, expand=True,
+                                                               side='bottom')
+
         Button(self.r, text='修改名单/查看名单', width=20, command=lambda: os.startfile(
             cur_path+'\\name_list.txt')).pack(fill='x')
 
@@ -99,8 +105,8 @@ class archive_tk:
         self.btn_zipf = Button(self.r, text=t_jieya, command=self.read_zip)
         self.btn_zipf.pack(fill='x')
 
-        Button(self.r, text='查看日志', command=lambda: os.startfile(
-            cur_path+'\\logs'), relief=FLAT).pack(side='bottom', anchor=SE)
+        # Button(self.r, text='查看日志', command=lambda: os.startfile(
+        #     cur_path+'\\logs'), relief=FLAT).pack(side='bottom', anchor=SE)
 
         self.r.mainloop()
 

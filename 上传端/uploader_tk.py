@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 import os
 import zipfile
+from PIL import Image, ImageTk
 
 
 class Frame_info(Frame):
@@ -77,6 +78,11 @@ class uploader_tk:
     def __init__(self):
         self.r.title('上传端')
         self.r.geometry('350x500+100+100')
+
+        background_image = ImageTk.PhotoImage(
+            Image.open(os.path.dirname(__file__)+'/bg.png'))
+        Label(self.r, image=background_image, bg='white').pack(fill=BOTH, expand=YES,
+                                                               side='bottom')
 
         Label(self.r, text='个人信息').pack()
         self.f_info.pack(fill='x')
@@ -179,10 +185,10 @@ class uploader_tk:
                         r.btns.append(btn)
                 break
 
-        Label(r, text='\n温馨提示\n不强制要求提交的文件与任务中提到的文件名同名，\n本软件将自动在压缩过程中对文件进行重命名。\n\n请不要修改压缩包的文件名，否则将导致压缩失败').pack(
-            fill='x')
         Button(r, text='单击此按钮，可使本窗口最大化',
-               command=lambda: r.state('zoomed')).pack()
+               command=lambda: r.state('zoomed')).pack(fill='x')
+        Button(r, text='单击此按钮，查看重要的注意事项',
+               command=lambda: self.prompt(r)).pack(fill='x')
 
         Frame_bool = Frame(r)
         self.btn = Button(Frame_bool, text='确定', command=lambda: self.get_files(task_line, filenames, r), bg='lightgreen', width=20,
@@ -191,6 +197,19 @@ class uploader_tk:
         Button(Frame_bool, text='取消', command=lambda: r.destroy(), bg='white', width=20,
                relief=FLAT, activebackground='red').pack(side='right', fill='x', expand=True)
         Frame_bool.pack(side='bottom', fill='x')
+
+    def prompt(self, root: Toplevel):
+        r = Toplevel(root)
+        r.title('注意事项')
+        r.geometry('350x500+820+100')
+        Label(r, text='''
+温馨提示
+不强制要求提交的文件与任务中提到的文件名同名，
+本软件将在压缩过程中自动为文件进行重命名
+(请注意：软件会保留您所上传的文件的原有文件格式)
+
+请确保压缩包生成路径是存在的，否则将无法正常生成压缩包
+请不要修改压缩包的文件名，否则将导致归档端解压缩失败''').pack(fill=BOTH)
 
     def get_filename(self, filenames, btn):
         # print(filenames)
