@@ -72,6 +72,7 @@ class uploader_tk:
     f_info = Frame_info(r)
     btns_task = []
     now_int = IntVar()
+    filepath_int = IntVar()
 
     def __init__(self):
         self.r.title('上传端')
@@ -92,18 +93,25 @@ class uploader_tk:
             return None
 
         self.task_list = []
+        self.task_dict_list = []
         f_analysis = open(filename, 'r', encoding='utf-8')
         allinfo = f_analysis.readlines()
         temp_res = ''
+        temp_task_dict = {}
         flag = False
         for line in allinfo:
             if line[0] == '|':
                 temp_res += line[2:]
+                temp_task_dict.setdefault(line[2:-1], '')
+                # print(temp_task_dict)
                 flag = True
             if flag and not line[0] == '|':
                 flag = False
                 self.task_list.append(temp_res)
+                self.task_dict_list.append(temp_task_dict)
                 temp_res = ''  # 这句真得很重要
+                temp_task_dict = {}
+        # print(self.task_dict_list)
 
         allinfo.reverse()
         # print(allinfo)
@@ -130,16 +138,17 @@ class uploader_tk:
                 btn.destroy()
             self.btns_task = []
         for task_line in task_lines:
-            btn = Radiobutton(self.r, text='未完成任务：'+task_line, command=lambda: self.get_zipfile(task_lines[self.now_int.get()]),
+            btn = Radiobutton(self.r, text=f'未完成任务{task_lines.index(task_line)+1}：'+task_line, command=lambda: self.get_zipfile(task_lines[self.now_int.get()]),
                               variable=self.now_int, value=task_lines.index(task_line), anchor=W)
             btn.pack(fill='x')
             self.btns_task.append(btn)
 
     def get_zipfile(self, task_line):
-        print(task_line)
+        # print(task_line)
         r = Toplevel(self.r)
         r.geometry('350x500+460+100')
         r.title(task_line)
+        r.btns = []
 
         # print(self.task_list)
         for task in self.task_list:
@@ -152,17 +161,47 @@ class uploader_tk:
             # print(task_line, name)
             if task_line == name:
                 if task.index(task_line) == 0:
-                    Label(r, text='任务名以及需要提交的文件：' +
-                          task[:-1], anchor=W).pack(fill='x')
-        Button(r, text='选择符合要求的文件（按住CTRL键可进行多选）：',
-               command=lambda: self.get_paths(task_line, r)).pack(fill='x')
-
-    def get_paths(self, task_name, r: Toplevel):
-        print(task_name)
+                    Label(r, text='任务名：' +
+                          name, anchor=W).pack(fill='x')
+        # print(task_line)
         filenames = []
-        files = filedialog.askopenfiles()
-        for file in files:
-            filenames.append(file.name)
+        for task_dict in self.task_dict_list:
+            temp_list = list(task_dict.keys())
+            if task_line in temp_list:
+                # print(task_line, task_dict[task_line]+'ll')
+                # print(temp_list)
+                for filepath in temp_list:
+                    if temp_list.index(filepath):
+                        filenames.append('')
+                        btn = Radiobutton(r, text=filepath+': ', variable=self.filepath_int,
+                                          value=temp_list.index(filepath), anchor=W, command=lambda: self.get_filename(filenames, r.btns[self.filepath_int.get()-1]))
+                        btn.pack(fill='x')
+                        r.btns.append(btn)
+                break
+
+        Frame_bool = Frame(r)
+        self.btn = Button(Frame_bool, text='确定', command=lambda: self.get_files(task_line, filenames, r), bg='lightgreen', width=20,
+                          relief=FLAT, activebackground='green')
+        self.btn.pack(side='left', fill='x', expand=True)
+        Button(Frame_bool, text='取消', command=lambda: r.destroy(), bg='white', width=20,
+               relief=FLAT, activebackground='red').pack(side='right', fill='x', expand=True)
+        Frame_bool.pack(side='bottom', fill='x')
+
+    def get_filename(self, filenames, btn):
+        print(filenames)
+        file = filedialog.askopenfile()
+        filenames[self.filepath_int.get()-1] = file.name
+
+        name = ''
+        for ch in btn['text']:
+            if ch == ':':
+                break
+            else:
+                name += ch
+        btn['text'] = f'{name}: {file.name}'
+
+    def get_files(self, task_name, filenames, r: Toplevel):
+        # print(task_name)
         if filenames.__len__() > 0:
             with zipfile.ZipFile(self.f_info.path+'/' + self.f_info.num + '-' + self.f_info.name + '.' + task_name + '.zip', 'w') as zipf:
                 if filenames.__len__() == 1:
@@ -176,7 +215,7 @@ class uploader_tk:
                                self.f_info.num + '-' + self.f_info.name + filetype[::-1])
                 else:
                     for filename in filenames:
-                        print(filename)
+                        # print(filename)
                         temp_str = filename[::-1]
                         filetype = ''
                         mainname = ''
@@ -193,6 +232,8 @@ class uploader_tk:
                         zipf.write(filenames[0], self.f_info.num + '-' + self.f_info.name + '/' +
                                    mainname[::-1] + filetype[::-1])
             r.destroy()
+        else:
+            self.btn['text'] = '确定[您还未选择任何文件！]'
 
 
 uploader_tk()

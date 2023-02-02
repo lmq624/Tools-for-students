@@ -58,6 +58,7 @@ class Toplevel_task(Toplevel):
                 temp_str += ch
         f.write(res_str)
         f.close()
+        os.mkdir(cur_path+'\\已解压的文件\\'+self.text_name.get(1.0, 'end')[:-1])
         self.destroy()
 
     def isonlyhaveblank(self, test_str):
@@ -131,7 +132,7 @@ class collect_tk:
         f.write('名单概览：\n')
         i = 0
         for num in num_list:
-            f.write(num[:-1]+name_list[i][:-1]+', ')
+            f.write(num[:-1]+'-'+name_list[i][:-1]+', ')
             i += 1
             if i % 8 == 0:
                 f.write('\n')
