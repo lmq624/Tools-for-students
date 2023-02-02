@@ -39,7 +39,7 @@ class Frame_info(Frame):
 
         frame_path = Frame(self)
 
-        btn_path = Button(frame_path, text='指定生成路径：',
+        btn_path = Button(frame_path, text='压缩包生成路径：',
                           anchor=E, command=self.get_path)
         btn_path.pack(side='left')
 
@@ -173,11 +173,14 @@ class uploader_tk:
                 for filepath in temp_list:
                     if temp_list.index(filepath):
                         filenames.append('')
-                        btn = Radiobutton(r, text=filepath+': ', variable=self.filepath_int,
+                        btn = Radiobutton(r, text=filepath+': ', variable=self.filepath_int, activebackground='lightgreen', bg='white',
                                           value=temp_list.index(filepath), anchor=W, command=lambda: self.get_filename(filenames, r.btns[self.filepath_int.get()-1]))
                         btn.pack(fill='x')
                         r.btns.append(btn)
                 break
+
+        Label(r, text='\n温馨提示\n不强制要求提交的文件与任务中提到的文件名同名，\n本软件将自动在压缩过程中对文件进行重命名。').pack(
+            fill='x')
 
         Frame_bool = Frame(r)
         self.btn = Button(Frame_bool, text='确定', command=lambda: self.get_files(task_line, filenames, r), bg='lightgreen', width=20,
@@ -188,9 +191,12 @@ class uploader_tk:
         Frame_bool.pack(side='bottom', fill='x')
 
     def get_filename(self, filenames, btn):
-        print(filenames)
+        # print(filenames)
         file = filedialog.askopenfile()
-        filenames[self.filepath_int.get()-1] = file.name
+        if not file == None:
+            filenames[self.filepath_int.get()-1] = file.name
+        else:
+            return 0
 
         name = ''
         for ch in btn['text']:
@@ -203,7 +209,7 @@ class uploader_tk:
     def get_files(self, task_name, filenames, r: Toplevel):
         # print(task_name)
         if filenames.__len__() > 0:
-            with zipfile.ZipFile(self.f_info.path+'/' + self.f_info.num + '-' + self.f_info.name + '.' + task_name + '.zip', 'w') as zipf:
+            with zipfile.ZipFile(self.f_info.path+'/' + self.f_info.num + '-' + self.f_info.name + '=' + task_name + '.zip', 'w') as zipf:
                 if filenames.__len__() == 1:
                     temp_str = filenames[0][::-1]
                     filetype = ''

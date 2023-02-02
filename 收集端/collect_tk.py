@@ -27,6 +27,7 @@ class Toplevel_task(Toplevel):
 项目概述.doc
 
 （注：Windows系统内，文件名不得含有以下任何半角字符：\ / : * ? " < > | ）
+（由本软件功能运行(压缩、解压缩)要求：文件名内不得含有等号，即“=”。）
 （当本文本框被清空时或仅填一项时，压缩包将被解压为单文件，否则为文件夹）
 （以上都是引导用的例子，实际使用时应该删除它们）'''
         self.task_name.insert(1.0, example)
@@ -199,7 +200,7 @@ class collect_tk:
                     # print(f)
                     task_name = ''
                     for ch in f[:-4][::-1]:
-                        if ch == '.':
+                        if ch == '=':
                             break
                         else:
                             task_name += ch
