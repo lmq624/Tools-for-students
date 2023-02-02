@@ -161,8 +161,11 @@ class archive_tk:
         for root, dirs, files in os.walk(cur_path + '\\已解压的文件'):
             if root == cur_path + '\\已解压的文件':
                 pass
+            elif '\\' in root[len_of_dir:]:
+                pass
             else:
-                # print(root[len_of_dir:])
+                # print(root)
+                # print(root[len_of_dir:], dirs, files)
                 # print(task_list)
                 for task in task_list:
                     if root[len_of_dir:] == task[0][:-1]:
@@ -170,19 +173,30 @@ class archive_tk:
                         f.write('| '+task[0])
                         for task_info in task[1:]:
                             f.write('| '+task_info)
-                        f.write('已交数量：'+str(files.__len__())+'\n')
+                        f.write(f'已交数量：{files.__len__()+dirs.__len__()}\n')
                         f.write(
-                            '未交数量：'+str(num_list.__len__()-files.__len__())+'\n')
+                            f'未交数量：{num_list.__len__()-files.__len__()-dirs.__len__()}\n')
                         # print(task[0][:-1], files)
+
                         for res in res_list:
                             hasupload = False
-                            for file in files:
-                                # print(res[0][:-1], file)
-                                if res[0][:-1] in file:
-                                    hasupload = True
-                                    break
-                            if hasupload == False:
-                                res.append(task[0])
+                            if dirs.__len__() == 0:
+                                # print(dirs.__len__(), files)
+                                for file in files:
+                                    print(res[0][:-1], file)
+                                    if res[0][:-1] in file:
+                                        hasupload = True
+                                        break
+                                if hasupload == False:
+                                    res.append(task[0])
+                            else:
+                                for dir_ in dirs:
+                                    print(dir_[-root.__len__():])
+                                    if res[0][:-1] in dir_[-root.__len__():]:
+                                        hasupload = True
+                                        break
+                                if hasupload == False:
+                                    res.append(task[0])
 
         # print(num_list, name_list, task_list)
         # print(res_list)
