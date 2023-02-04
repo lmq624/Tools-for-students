@@ -243,6 +243,9 @@ class uploader_tk:
                 else:
                     for filename in filenames:
                         # print(filename)
+                        if filename == '':
+                            self.btn['text'] = '确定[您还有未选择的文件！]'
+                            return 0
                         temp_str = filename[::-1]
                         filetype = ''
                         mainname = ''
