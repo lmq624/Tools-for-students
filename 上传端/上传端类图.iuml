@@ -10,7 +10,7 @@ package "Launch.py"{
     main *-- tkinter.Canvas : 组合
 }
 
-package "Tl_main.py"{
+package "Tl_main.py" <<Frame>> {
     Tl_nnp : +editPath(self):None
     Tl_nnp : +okFunc(self):None
     
@@ -21,7 +21,7 @@ package "Tl_main.py"{
     main --> Tl_nnp: 关联
 }
 
-package "TL_TaskView.py"{
+package "TL_TaskView.py" <<Frame>> {
     Tl_TaskView <-- Tl_TasksView:关联
     Tl_TaskView --|> tkinter.Frame : 泛化
 

@@ -1,5 +1,4 @@
 import zipfile
-from os.path import join, dirname
 from tkinter import Tk, Toplevel, Label, Button, Frame, filedialog, Radiobutton, IntVar
 
 
@@ -8,6 +7,8 @@ class Tl_TaskView(Toplevel):
         super().__init__(r, bg='white')
         self.geometry('350x500+520+100')
         self.title(task_line)
+        self.info = r.info
+        self.task_dict_list = r.task_dict_list
 
         self.btns = []
         self.filepath_int = IntVar()
@@ -47,7 +48,7 @@ class Tl_TaskView(Toplevel):
                command=lambda: self.prompt(self)).pack(fill='x')
 
         Frame_bool = Frame(self)
-        self.btn = Button(Frame_bool, text='确定', command=lambda: r.get_files(task_line, filenames, self), bg='lightgreen', width=20,
+        self.btn = Button(Frame_bool, text='确定', command=lambda: self.get_files(task_line, filenames, self), bg='lightgreen', width=20,
                           relief='flat', activebackground='green')
         self.btn.pack(side='left', fill='x', expand=True)
         Button(Frame_bool, text='取消', command=lambda: self.destroy(), bg='white', width=20,
@@ -97,6 +98,11 @@ class Tl_TaskView(Toplevel):
                     zipf.write(filenames[0],  # task_name + '-' +
                                self.info[1][:-1] + '-' + self.info[0][:-1] + filetype[::-1])
                 else:
+                    # print(task_name, self.task_dict_list)
+                    for task_dict in self.task_dict_list:
+                        if task_name in task_dict.keys():
+                            break
+                    # print(task_name, list(task_dict.keys())[1:])
                     for filename in filenames:
                         # print(filename)
                         if filename == '':
@@ -104,17 +110,22 @@ class Tl_TaskView(Toplevel):
                             return 0
                         temp_str = filename[::-1]
                         filetype = ''
-                        mainname = ''
                         flag = 1
                         for ch in temp_str:
                             if ch == '/':
                                 break
                             elif flag:
                                 filetype += ch
-                            else:
-                                mainname += ch
                             if ch == '.':
                                 flag = 0
+
+                        mainname = ''
+                        for ch in list(task_dict.keys())[1:][filenames.index(filename)][::-1]:
+                            if flag:
+                                mainname += ch
+                            if ch == '.':
+                                flag = 1
+
                         zipf.write(filenames[0], self.info[1][:-1] + '-' + self.info[0][:-1] + '/' +
                                    mainname[::-1] + filetype[::-1])
             r.destroy()

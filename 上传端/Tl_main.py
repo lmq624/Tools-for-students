@@ -71,7 +71,7 @@ class Tl_TasksView(Toplevel):
         super().__init__(r, bg='white')
         self.geometry('400x220+100+380')
         self.title('任务视窗')
-        print(task_lines)
+        # print(task_lines)
         self.task_lines = task_lines
         self.task_dict_list = r.task_dict_list
 
