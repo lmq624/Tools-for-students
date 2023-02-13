@@ -1,5 +1,6 @@
 from os.path import join, dirname
-from tkinter import Tk, Toplevel, Text, Label, Toplevel, Event, Label, Button, Text, Frame, filedialog
+from tkinter import Tk, Toplevel, Text, Label, Event, Button, Text, Frame, filedialog, Radiobutton
+from Tl_TaskView import Tl_TaskView
 
 
 class Tl_nnp(Toplevel):
@@ -60,7 +61,35 @@ class Tl_nnp(Toplevel):
         self.r.cv.itemconfig(self.r.text_path, text='压缩包生成路径：\n' + new_path)
         with open(join(dirname(__file__), 'info.txt'), 'w', encoding='utf-8') as f:
             f.write(f'{new_name}\n{new_number}\n{new_path}')
+        with open(join(dirname(__file__), 'info.txt'), 'r', encoding='utf-8') as f:
+            self.r.info = f.readlines()
         self.destroy()
+
+
+class Tl_TasksView(Toplevel):
+    def __init__(self, r: Tk, task_lines):
+        super().__init__(r, bg='white')
+        self.geometry('400x220+100+380')
+        self.title('任务视窗')
+        print(task_lines)
+        self.task_lines = task_lines
+        self.task_dict_list = r.task_dict_list
+
+        if task_lines.__len__():
+            Label(self, text=f'还有 {task_lines.__len__()} 项任务未完成',
+                  anchor='w', bg='white').pack(fill='x')
+        else:
+            Label(self, text='已完成所有任务！',
+                  anchor='w', bg='white').pack(fill='x')
+        if r.btns_task.__len__():
+            for btn in r.btns_task:
+                btn.destroy()
+            r.btns_task = []
+        for task_line in task_lines:
+            btn = Radiobutton(self, text=f'未完成任务{task_lines.index(task_line)+1}：'+task_line, command=lambda: Tl_TaskView(r, task_lines[r.now_int.get()]),
+                              variable=r.now_int, value=task_lines.index(task_line), anchor='w', bg='white')
+            btn.pack(fill='x')
+            r.btns_task.append(btn)
 
 
 if __name__ == '__main__':
