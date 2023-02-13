@@ -1,0 +1,23 @@
+@startuml  
+
+title:上传端类图
+
+
+tkinter.Tk --|> main : 泛化
+tkinter.Canvas --* main : 组合
+
+class main{
+    +Canvas cv
+    +setGUI():None
+}
+
+class Tl_nnp{
+    +editPath(self):None
+    +okFunc(self):None
+}
+
+main --> Tl_nnp: 联系
+tkinter.Frame --|> Tl_nnp : 泛化
+
+
+@enduml
