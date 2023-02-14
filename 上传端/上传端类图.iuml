@@ -2,28 +2,36 @@
 
 title:上传端类图
 
-package "Launch.py"{
-    main : +Canvas cv
-    main : +setGUI():None
-
-    main --|> tkinter.Tk : 泛化
-    main *-- tkinter.Canvas : 组合
+class tkinter.Canvas {
+    +create_line()
 }
 
-package "Tl_main.py" <<Frame>> {
+class Launch.main {
+    +Canvas cv
+    +setGUI():None
+    file_analysis(self, filename)
+}
+
+package Launch {
+
+    tkinter.Tk <|-- Launch.main : 泛化
+    tkinter.Canvas --* Launch.main : 组合
+}
+
+package Tl_main <<Frame>> {
     Tl_nnp : +editPath(self):None
     Tl_nnp : +okFunc(self):None
     
-    Tl_TasksView --|> tkinter.Frame : 泛化
-    Tl_nnp --|> tkinter.Frame : 泛化
+    tkinter.Frame <|-- Tl_nnp : 泛化
+    tkinter.Frame <|-- Tl_TasksView : 泛化
 
-    main -> Tl_TasksView: 关联
-    main --> Tl_nnp: 关联
+    Launch.main -> Tl_TasksView: 关联
+    Launch.main --> Tl_nnp: 关联
 }
 
-package "TL_TaskView.py" <<Frame>> {
-    Tl_TaskView <-- Tl_TasksView:关联
-    Tl_TaskView --|> tkinter.Frame : 泛化
+package TL_TaskView <<Frame>> {
+    Tl_TasksView --> Tl_TaskView :关联
+    tkinter.Frame <|-- Tl_TaskView : 泛化
 
 }
 

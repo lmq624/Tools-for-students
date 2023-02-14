@@ -86,6 +86,9 @@ class Tl_TaskView(Toplevel):
 
     def get_files(self, task_name, filenames, r: Toplevel):
         # print(task_name)
+        if '' in filenames:
+            self.btn['text'] = '确定[您还有未选择的文件！]'
+            return 0
         if filenames.__len__() > 0:
             with zipfile.ZipFile(self.info[2]+'/' + self.info[1][:-1] + '-' + self.info[0][:-1] + '=' + task_name + '.zip', 'w') as zipf:
                 if filenames.__len__() == 1:
@@ -105,9 +108,6 @@ class Tl_TaskView(Toplevel):
                     # print(task_name, list(task_dict.keys())[1:])
                     for filename in filenames:
                         # print(filename)
-                        if filename == '':
-                            self.btn['text'] = '确定[您还有未选择的文件！]'
-                            return 0
                         temp_str = filename[::-1]
                         filetype = ''
                         flag = 1

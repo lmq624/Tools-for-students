@@ -14,6 +14,10 @@ class Tl_nnp(Toplevel):
         self.title('编辑个人信息')
         self.geometry(
             f'200x200+{int(event.x_root-60)}+{int(event.y_root-40)}')
+        Button(self, text='确定', bg='lightgreen',
+               relief='flat', activebackground='green',
+               command=self.okFunc).pack(
+            fill='x')
 
         Frame_name = Frame(self)
         Label(Frame_name, text='编辑姓名：', anchor='w',
@@ -37,11 +41,6 @@ class Tl_nnp(Toplevel):
         self.Text_path = Text(self, height=5, bg='lightblue')
         self.Text_path.insert(1.0, r.info[2])
         self.Text_path.pack()
-
-        Button(self, text='确定', bg='lightgreen',
-               relief='flat', activebackground='green',
-               command=self.okFunc).pack(
-            fill='x', side='bottom')
 
     def editPath(self):
         self.path = filedialog.askdirectory(title='请选择用于压缩包的文件夹')
