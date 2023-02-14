@@ -1,0 +1,51 @@
+@startuml  
+
+title:上传端类图
+
+class Launch.main {
+    +self.cv: Canvas
+    +self.now_int: IntVar
+    +self.filepath_int: IntVar
+    ..
+    +self.btns_task: list
+    +self.text_name: int
+    +self.text_number: int
+    +self.text_path: int
+    ==
+    +setGUI():None
+    +file_analysis(self, filename)
+}
+
+tkinter.Tk <|-- Launch.main : 泛化
+tkinter.Canvas --* Launch.main : 组合
+tkinter.IntVar --* Launch.main : 组合
+
+package Tl_main <<Frame>> {
+    tkinter.Toplevel <|-- Tl_TasksView : 泛化
+    Launch.main -> Tl_TasksView: 关联-file_analysis
+
+    Tl_TasksView : +self.task_lines: list
+    Tl_TasksView : +self.task_dict_list: dict
+
+    tkinter.Toplevel <|-- Tl_nnp : 泛化
+    Launch.main --> Tl_nnp: 关联-左键单击事件
+
+    Tl_nnp : +self.Text_name
+    Tl_nnp : +self.Text_number
+    Tl_nnp : +self.Text_path
+    Tl_nnp : +editPath(self):None
+    Tl_nnp : +okFunc(self):None
+}
+
+package TL_TaskView <<Frame>> {
+    Tl_TasksView --> Tl_TaskView :关联-左键单击事件
+    tkinter.Toplevel <|-- Tl_TaskView : 泛化
+    ' tkinter.IntVar --* Tl_TaskView : 组合
+
+    Tl_TaskView : +self.filepath_int: IntVar
+    Tl_TaskView : +get_filename(self, filenames, btn)
+    Tl_TaskView : +prompt(self, root: Toplevel)
+    Tl_TaskView : +get_files(self, task_name, filenames, r: Toplevel)
+}
+
+@enduml

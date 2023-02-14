@@ -13,6 +13,10 @@ class main(Tk):
         self.title('上传端')
         self.resizable(0, 0)
 
+        self.btns_task = []
+        self.now_int = IntVar()
+        self.filepath_int = IntVar()
+
         self.cv = Canvas(self, bg='white')
         self.cv.pack(fill='both', expand=True)
 
@@ -51,10 +55,6 @@ class main(Tk):
         self.cv.tag_bind('log', '<Button-1>',
                          lambda event: self.file_analysis(
                              filedialog.askopenfilename()))
-
-        self.btns_task = []
-        self.now_int = IntVar()
-        self.filepath_int = IntVar()
 
     def file_analysis(self, filename):
         if filename == '':

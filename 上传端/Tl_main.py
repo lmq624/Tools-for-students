@@ -92,7 +92,7 @@ class Tl_TasksView(Toplevel):
 
 
 if __name__ == '__main__':
-    # 必须导入main.py进行测试
+    # 必须导入Launch.py进行测试
     r = Tk()
     r.geometry('400x300+100+100')
     r.title('上传端')
