@@ -1,25 +1,25 @@
-# archive_tk.py
-from tkinter import *
-from tkinter import filedialog
+from ctypes import OleDLL
+from tkinter import Tk, Toplevel, Button, Text, Label, Frame
 import os
 import time
 import zipfile
-from PIL import Image, ImageTk
 
 cur_path = os.path.dirname(__file__)
 
 
 class Toplevel_task(Toplevel):
-    def __init__(self, r):
+    def __init__(self, r, event):
         super().__init__(r)
         self.title('生成新任务')
-        self.geometry('350x500+410+100')
+        self.attributes('-toolwindow', 1)
+        self.geometry(
+            f'350x500+{int(event.x_root-60)}+{int(event.y_root-70)}')
 
-        Label(self, text='【必填】任务名称/文件夹名称：').pack(anchor=W)
+        Label(self, text='【必填】任务名称/文件夹名称：').pack(anchor='w')
         self.text_name = Text(self, height=1)
         self.text_name.pack(fill='x')
-        Label(self, text='所需提交的文件名(最好包括文件类型)列表：').pack(anchor=W)
-        Button(self, text='清空本行以下文字',
+        Label(self, text='所需提交的文件名(最好包括文件类型)列表：').pack(anchor='w')
+        Button(self, text='清空本行以下文字', relief='groove',
                command=lambda: self.task_name.delete(1.0, 'end')).pack(fill='x')
         self.task_name = Text(self, height=25)
         example = '''
@@ -36,10 +36,10 @@ class Toplevel_task(Toplevel):
 
         Frame_bool = Frame(self)
         self.btn = Button(Frame_bool, text='确定', command=self.add_tack, bg='lightgreen', width=20,
-                          relief=FLAT, activebackground='green')
+                          relief='flat', activebackground='green')
         self.btn.pack(side='left', fill='x', expand=True)
         Button(Frame_bool, text='取消', command=self.destroy, bg='white', width=20,
-               relief=FLAT, activebackground='red').pack(side='right', fill='x', expand=True)
+               relief='flat', activebackground='red').pack(side='right', fill='x', expand=True)
         Frame_bool.pack(side='bottom', fill='x')
 
     def add_tack(self):
@@ -53,7 +53,7 @@ class Toplevel_task(Toplevel):
         temp_str = ''
         for ch in tasks:
             if ch == '\n':
-                if temp_str.__len__() and not self.isonlyhaveblank(temp_str):
+                if temp_str.__len__() and not self.isonlyhaveBlank(temp_str):
                     res_str += temp_str+ch
                 temp_str = ''
             else:
@@ -63,52 +63,62 @@ class Toplevel_task(Toplevel):
         os.mkdir(cur_path+'\\已解压的文件\\'+self.text_name.get(1.0, 'end')[:-1])
         self.destroy()
 
-    def isonlyhaveblank(self, test_str):
+    def isonlyhaveBlank(self, test_str):
         for ch in test_str:
-            if not ch == ' ' and not ch == '\t':
+            if not ch == ' ' and not ch == '\t' and not ch == '\n':
                 return False
         return True
 
 
-class archive_tk:
-    r = Tk()
-
+class archive_tk(Tk):
     def __init__(self):
-        self.r.title('归档端')
-        self.r.geometry('300x500+100+100')
+        super().__init__()
+        OleDLL('shcore').SetProcessDpiAwareness(1)
+        self.title('归档端')
+        self.geometry('300x255+1000+200')
 
-        background_image = ImageTk.PhotoImage(
-            Image.open(os.path.dirname(__file__)+'/bg.jpg'))
-        Label(self.r, image=background_image, bg='white').pack(fill=BOTH, expand=True,
-                                                               side='bottom')
+        # 名单
+        Button(self, text='修改名单/查看名单', height=3,
+               relief='groove', bg='LightBlue',
+               command=lambda: os.startfile(cur_path+'\\name_list.txt')).pack(fill='both')
 
-        Button(self.r, text='修改名单/查看名单', width=20, command=lambda: os.startfile(
-            cur_path+'\\name_list.txt')).pack(fill='x')
-
-        Frame_task = Frame(self.r)
-        Button(Frame_task, text='生成新任务', width=20, height=3,
-               command=lambda: Toplevel_task(self.r)).pack(side='right', fill='x')
-        Button(Frame_task, text='查看已有任务', width=20, height=3, command=lambda: os.startfile(
-            cur_path+'\\tasks')).pack(side='left', fill='x')
+        # 任务
+        Frame_task = Frame(self)
+        btn_task = Button(Frame_task, text='生成新任务', width=20, height=3,
+                          relief='groove', bg='cyan')
+        btn_task.pack(side='right', fill='x', expand=1)
+        btn_task.bind('<Button-1>', lambda event: Toplevel_task(self, event))
+        Button(Frame_task, text='查看已有任务', width=20, height=3,
+               relief='groove', bg='DeepSkyBlue',
+               command=lambda: os.startfile(cur_path+'\\tasks')).pack(side='left', fill='x', expand=1)
         Frame_task.pack(fill='x')
 
-        Frame_statistics = Frame(self.r)
+        # 统计
+        Frame_statistics = Frame(self)
         Button(Frame_statistics, text='生成统计文件', width=20, height=3,
-               command=self.statistics).pack(side='right', fill='x')
-        Button(Frame_statistics, text='查看已有统计文件', width=20, height=3, command=lambda: os.startfile(
-            cur_path+'\\统计文件')).pack(side='left', fill='x')
+               relief='groove', bg='Aquamarine',
+               command=self.statistics).pack(side='right', fill='x', expand=1)
+        Button(Frame_statistics, text='查看已有统计文件', width=20, height=3,
+               relief='groove', bg='DodgerBlue',
+               command=lambda: os.startfile(cur_path+'\\统计文件')).pack(side='left', fill='x', expand=1)
         Frame_statistics.pack(fill='x')
 
-        t_jieya = '解压文件 | '
+        # 解压
+        Frame_zipfile = Frame(self)
+        Button(Frame_zipfile, text='查看已解压的文件', width=20, height=3,
+               relief='groove', bg='RoyalBlue',
+               command=lambda: os.startfile(cur_path+'\\已解压的文件')
+               ).pack(side='left', fill='x', expand=1)
         for root, dirs, files in os.walk(cur_path+'\\待解压的文件'):
-            t_jieya += '待解压数量：' + str(files.__len__())
-        self.btn_zipf = Button(self.r, text=t_jieya, command=self.read_zip)
-        self.btn_zipf.pack(fill='x')
+            if root == cur_path+'\\待解压的文件':
+                ZipfileNum = files.__len__()  # + dirs.__len__()
+        self.btn_zipf = Button(Frame_zipfile, text='解压文件\n待解压数量：' + str(ZipfileNum),
+                               relief='groove', bg='PaleGreen',
+                               width=20, height=3, command=self.read_zip)
+        self.btn_zipf.pack(side='right', fill='x', expand=1)
+        Frame_zipfile.pack(fill='x')
 
-        # Button(self.r, text='查看日志', command=lambda: os.startfile(
-        #     cur_path+'\\logs'), relief=FLAT).pack(side='bottom', anchor=SE)
-
-        self.r.mainloop()
+        self.mainloop()
 
     def statistics(self):
         f = open(cur_path+'\\统计文件\\'+'常规统计_%s.log' %
@@ -183,7 +193,7 @@ class archive_tk:
                             if dirs.__len__() == 0:
                                 # print(dirs.__len__(), files)
                                 for file in files:
-                                    print(res[0][:-1], file)
+                                    # print(res[0][:-1], file)
                                     if res[0][:-1] in file:
                                         hasupload = True
                                         break
@@ -191,7 +201,7 @@ class archive_tk:
                                     res.append(task[0])
                             else:
                                 for dir_ in dirs:
-                                    print(dir_[-root.__len__():])
+                                    # print(dir_[-root.__len__():])
                                     if res[0][:-1] in dir_[-root.__len__():]:
                                         hasupload = True
                                         break
@@ -227,10 +237,8 @@ class archive_tk:
                     zipf.extractall(os.path.dirname(
                         __file__)+'\\已解压的文件\\'+task_name[::-1])
                 os.remove(root + '\\' + f)
-        t_jieya = '解压文件 | '
         for root, dirs, files in os.walk(cur_path+'\\待解压的文件'):
-            t_jieya += '待解压数量：' + str(files.__len__())
-        self.btn_zipf['text'] = t_jieya
+            self.btn_zipf['text'] = '解压文件\n待解压数量：' + str(files.__len__())
 
 
 archive_tk()
