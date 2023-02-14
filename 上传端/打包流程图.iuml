@@ -1,47 +1,47 @@
 @startuml  
-title 上传端使用流程图
+title <font size="35">上传端使用流程图</font>
 
 start
 partition <b>安装</b> {
-    :下载<b>最新版本</b>安装包;
-    :双击安装包，选择安装路径;
-    :多次点击“下一步”，直到出现安装进度条;
-    :安装完成，双击上传端桌面快捷方式以启动应用;
+    :<font size="25">下载<b>最新版本</b>安装包</font>;
+    :<font size="25">双击安装包，选择安装路径</font>;
+    :<font size="25">多次点击“下一步”，直到出现安装进度条</font>;
+    :<font size="25">安装完成，双击上传端桌面快捷方式以启动应用</font>;
 }
 partition 初始化 {
-    if (是否已进行过初始化？) then (否)
-        :单击 <u>水平虚线箭头上方的文字</u> 或 <u>浅绿色三角形</u>;
-        :修改信息弹窗上的个人信息;
-        note left:包括姓名、学号\n和 必须修改的压缩包生成路径
-        :确认信息无误后单击“确认”按钮即可完成初始化;
-    else (是)
+    if (<font size="25">是否已进行过初始化？</font>) then (<font size="25">否</font>)
+        :<font size="25">单击 <u>水平虚线箭头上方的文字</u> 或 <u>浅绿色三角形</u></font>;
+        :<font size="25">修改信息弹窗上的个人信息</font>;
+        note left:<font size="25">包括姓名、学号\n<font size="25">和 必须修改的压缩包生成路径</font>
+        :<font size="25">确认信息无误后单击“确认”按钮即可完成初始化</font>;
+    else (<font size="25">是</font>)
     endif
 }
 
 partition <b>日常使用</b> {
-    :下载最新的统计文件;
-    note left:统计文件的文件名通常为：\n常规统计.{creat_time}.log
-    :单击水平虚线箭头下方的文字，在对话框中选择最新的统计文件;
-    if (用户是否已完成所有任务) then (是)
-    :弹出任务视窗："已完成所有任务！";
-    else (否)
-        :弹出任务视窗：还有__项任务未完成;
-        while (还想继续生成压缩包)
-            :单击想提交的任务的任务名;
-            :弹出对应的任务文件打包窗口;
-            :单击文件名，选择对应的需要提交的文件;
-            :点击确认按钮;
-            if (选满所有任务文件) then (是)
-                :开始正常生成压缩包;
-            else (否)
-                :生成空压缩包;
+    :<font size="25">下载最新的统计文件</font>;
+    note left:<font size="25">统计文件的文件名通常为：\n<font size="25">常规统计.{creat_time}.log</font>
+    :<font size="25">单击水平虚线箭头下方的文字，在对话框中选择最新的统计文件</font>;
+    if (<font size="25">用户是否已完成所有任务</font>) then (<font size="25">是</font>)
+    :<font size="25">弹出任务视窗："已完成所有任务！"</font>;
+    else (<font size="25">否</font>)
+        :<font size="25">弹出任务视窗：还有__项任务未完成</font>;
+        while (<font size="25">还想继续生成压缩包</font>)
+            :<font size="25">单击想提交的任务的任务名</font>;
+            :<font size="25">弹出对应的任务文件打包窗口</font>;
+            :<font size="25">单击文件名，选择对应的需要提交的文件</font>;
+            :<font size="25">点击确认按钮</font>;
+            if (<font size="25">选满所有任务文件</font>) then (<font size="25">是</font>)
+                :<font size="25">生成压缩包</font>;
+            else (<font size="25">否</font>)
+                :<font size="25">不生成压缩包\n<font size="25">提示：应选满所有任务文件</font>;
             endif
-            :该任务文件打包窗口自动关闭;
-        endwhile
-        :将压缩包通过社交软件等发送给\n归档端软件使用者(文件收集者);
-        note left:可以在初始化时选择的文件夹中\n找到任务名对应的压缩包
+            :<font size="25">该任务文件打包窗口自动关闭</font>;
+        endwhile (<font size="25">不想继续生成压缩包\t</font>)
+        :<font size="25">将压缩包通过社交软件等发送给\n<font size="25">归档端软件使用者(文件收集者)</font>;
+        note left:<font size="25">可以在初始化时选择的文件夹中\n<font size="25">找到任务名对应的压缩包</font>
     endif
-    :结束本次日常使用;
+    :<font size="25">结束本次日常使用</font>;
 }
 
 stop
